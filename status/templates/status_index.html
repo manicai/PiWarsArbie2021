@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Arbie Status</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+          crossorigin="anonymous">
+</head>
+<body>
+    <div class="text-center">
+        <h1 class="display-2">Arbie Status</h1>
+    </div>
+
+    <div class="row">
+        <div class="col col-0 col-lg-3 col-sm-1"></div>
+        <div class="col col-12 col-lg-6 col-sm-10">
+            <table class="table table-striped table-hover table-bordered">
+                <colgroup>
+                    <col class="w-50" />
+                    <col class="w-50" />
+                </colgroup>
+                <tr>
+                    <td>Redboard</td>
+                    <td class="text-white {{ 'bg-success' if redboard_active else 'bg-danger' }}">
+                        {{ 'Active' if redboard_active else 'Not Present' }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>CPU Temperature</td>
+                    <td>{{ '{:.1f}  °C'.format(cpu_temperature) if cpu_temperature else 'Unknown' }}</td>
+                </tr>
+                <tr>
+                    <td>Battery Voltage</td>
+                    <td>{{ '{:.2f}  V'.format(battery_voltage) if battery_voltage else 'Unknown' }}</td>
+                </tr>
+                <tr>
+                    <td>IP Address</td>
+                    <td>{{ ip_address }}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col col-0 col-lg-3 col-sm-1"></div>
+    </div>
+</body>
+</html>
