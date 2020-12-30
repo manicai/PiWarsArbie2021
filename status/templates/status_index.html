@@ -12,9 +12,7 @@
           crossorigin="anonymous">
 </head>
 <body>
-    <div class="text-center">
-        <h1 class="display-2">Arbie Status</h1>
-    </div>
+    <h1 class="display-2 text-center">Arbie Status</h1>
 
     <div class="row">
         <div class="col col-0 col-lg-3 col-sm-1"></div>
@@ -41,6 +39,12 @@
                 <tr>
                     <td>IP Address</td>
                     <td>{{ ip_address }}</td>
+                </tr>
+                <tr>
+                    <td>Gamepad Devices</td>
+                    <td class="text-white {{ 'bg-success' if gamepad_devices else 'bg-danger' }}">
+                        {{ ', '.join(gamepad_devices) if gamepad_devices else 'Not connected' }}
+                    </td>
                 </tr>
             </table>
         </div>

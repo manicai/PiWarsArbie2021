@@ -11,6 +11,12 @@ except ImportError:
     redboard_bus = None
     redboard_active = False
 
+try:
+    import pyudev as udev
+except ImportError:
+    print('Failed to import udev library')
+    udev = None
+
 
 def get_temperature():
     try:
@@ -47,13 +53,34 @@ def get_ip_address():
     return socket.gethostbyname(socket.gethostname())
 
 
+def get_gamepad_devices(ctx = None):
+    """Get the device names of connected gamepads."""
+    if udev is None:
+        return []
+
+    if not ctx:
+        ctx = udev.Context()
+
+    # Internal " is needed for match to succeed.
+    device_name = '"8BitDo Zero 2 gamepad Keyboard"'
+    devices = list(ctx.list_devices(subsystem='input',
+                                    NAME=device_name))
+    prop_name = 'DEVNAME'
+    devices = set(child.properties.get(prop_name)
+                  for device in devices
+                  for child in device.children
+                  if child.properties.get(prop_name))
+    return devices
+
+
 @route('/')
 def index():
     return template('status_index.html',
                     redboard_active=redboard_active,
                     cpu_temperature=get_temperature(),
                     battery_voltage=get_battery_voltage(),
-                    ip_address=get_ip_address())
+                    ip_address=get_ip_address(),
+                    gamepad_devices=get_gamepad_devices())
 
 
 if __name__ == '__main__':
