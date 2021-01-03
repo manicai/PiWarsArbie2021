@@ -1,3 +1,3 @@
 [submodule "ros/src/arbie/arbie/RedBoard"]
-	path = ros/src/arbie/arbie/RedBoard
+	path = RedBoard
 	url = https://github.com/RedRobotics/RedBoard.git
