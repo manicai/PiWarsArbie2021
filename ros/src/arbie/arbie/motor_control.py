@@ -17,6 +17,12 @@ from rclpy.node import Node
 from std_msgs.msg import String
 
 from .constants import KeyAction, PadKeys
+from . import redboard
+
+
+# Scale factors to get straight driving.
+MOTOR_LEFT_SCALE = 100
+MOTOR_RIGHT_SCALE = -100
 
 
 class MotorController(Node):
@@ -42,6 +48,27 @@ class MotorController(Node):
             return
 
         self.get_logger().info('Cross action')
+        if action == KeyAction.up:
+            # Key released - stop
+            motor_left, motor_right = 0, 0
+        elif btn == PadKeys.cross_up:
+            motor_left, motor_right = 1, 1
+        elif btn == PadKeys.cross_down:
+            motor_left, motor_right = -1, -1
+        elif btn == PadKeys.cross_left:
+            motor_left, motor_right = -1, 1
+        elif btn == PadKeys.cross_right:
+            motor_left, motor_right = 1, -1
+        else:
+            assert False, 'Should be unreachable'
+
+        motor_left *= MOTOR_LEFT_SCALE
+        motor_right *= MOTOR_RIGHT_SCALE
+
+        self.get_logger().info('Motors : left %d, right %d' % (motor_left, motor_right))
+
+        redboard.M1(motor_left)
+        redboard.M2(motor_right)
 
 
 def main(args=None):

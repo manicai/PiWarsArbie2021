@@ -13,7 +13,9 @@ setup(
     ],
     install_requires=[
         'setuptools',
+        'pigpio',
         'pyudev',
+        'smbus',
     ],
     zip_safe=True,
     maintainer='Ian Glover',
