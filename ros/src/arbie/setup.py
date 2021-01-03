@@ -1,6 +1,6 @@
 from setuptools import setup
 
-package_name = 'motor_control'
+package_name = 'arbie'
 
 setup(
     name=package_name,
@@ -11,16 +11,20 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
     ],
-    install_requires=['setuptools'],
+    install_requires=[
+        'setuptools',
+        'pyudev',
+    ],
     zip_safe=True,
     maintainer='Ian Glover',
     maintainer_email='ian.glover@gmail.com',
-    description='Arbie Motor Control',
+    description='PiWars Arbie control code',
     license='Apache License 2.0',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'motor_control = motor_control.controller:main',
+            'gamepad = arbie.gamepad_reader:main',
+            'motor = arbie.motor_control:main',
         ],
     },
     classifiers=[

@@ -1,3 +1,5 @@
+# Copyright 2021 Ian Glover <ian.glover@gmail.com>
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -12,8 +14,9 @@
 
 import rclpy
 from rclpy.node import Node
-
 from std_msgs.msg import String
+
+from .constants import KeyAction, PadKeys
 
 
 class MotorController(Node):
@@ -27,7 +30,18 @@ class MotorController(Node):
         self.subscription  # prevent unused variable warning
 
     def listener_callback(self, msg):
-        self.get_logger().info('I heard: "%s"' % msg.data)
+        btn_text, action_text = [s.strip() for s in msg.data.split(' : ')]
+        btn, action = PadKeys[btn_text], KeyAction[action_text]
+        self.get_logger().info('I heard: "%s - %s"' % (btn, action))
+
+        # Ignore buttons that aren't part of the gamepad cross.
+        if not btn.is_cross():
+            return
+        # Ignore repeat
+        if action == KeyAction.repeat:
+            return
+
+        self.get_logger().info('Cross action')
 
 
 def main(args=None):

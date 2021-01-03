@@ -1,4 +1,4 @@
-# Copyright 2016 Open Source Robotics Foundation, Inc.
+# Copyright 2021 Ian Glover <ian.glover@gmail.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import enum
+
 import struct
 import time
 
@@ -20,6 +20,8 @@ import pyudev as udev
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
+
+from .constants import KeyAction, PadKeys
 
 
 def get_gamepad_devices(ctx: udev.Context = None):
@@ -37,29 +39,6 @@ def get_gamepad_devices(ctx: udev.Context = None):
                   for child in device.children
                   if child.properties.get(prop_name))
     return devices
-
-
-class PadKeys(enum.Enum):
-    """Input codes for gamepad keys."""
-    # Experimentally determined.
-    left_shoulder = 37
-    right_shoulder = 50
-    cross_up = 46
-    cross_left = 18
-    cross_right = 33
-    cross_down = 32
-    button_select = 49
-    button_start = 24
-    button_x = 35
-    button_y = 23
-    button_a = 34
-    button_b = 36
-
-
-class KeyAction(enum.Enum):
-    down = 1
-    repeat = 2
-    up = 0
 
 
 class GamepadReader(Node):
