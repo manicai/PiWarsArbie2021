@@ -38,7 +38,6 @@ class MotorController(Node):
     def listener_callback(self, msg):
         btn_text, action_text = [s.strip() for s in msg.data.split(' : ')]
         btn, action = PadKeys[btn_text], KeyAction[action_text]
-        self.get_logger().info('I heard: "%s - %s"' % (btn, action))
 
         # Ignore buttons that aren't part of the gamepad cross.
         if not btn.is_cross():
@@ -47,7 +46,6 @@ class MotorController(Node):
         if action == KeyAction.repeat:
             return
 
-        self.get_logger().info('Cross action')
         if action == KeyAction.up:
             # Key released - stop
             motor_left, motor_right = 0, 0
