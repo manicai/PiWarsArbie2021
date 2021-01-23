@@ -76,7 +76,11 @@ class GamepadReader(Node):
                         self.publisher_.publish(msg)
                         self.get_logger().info('Gamepad input: ' + msg.data)
 
-                    event = dev_file.read(struct_input_event_size)
+                    try:
+                        event = dev_file.read(struct_input_event_size)
+                    except IOError:
+                        # Probably means gamepad has disconnected.
+                        break
             finally:
                 dev_file.close()
 
