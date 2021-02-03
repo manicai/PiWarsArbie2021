@@ -44,7 +44,7 @@ def get_gamepad_devices(ctx: udev.Context = None):
 class GamepadReader(Node):
     def __init__(self):
         super().__init__('gamepad_reader')
-        self.publisher_ = self.create_publisher(String, 'controller', 10)
+        self._publisher = self.create_publisher(String, 'controller', 10)
 
     def read_loop(self):
         while True:
@@ -73,7 +73,7 @@ class GamepadReader(Node):
                     if evt_type == ev_key:
                         msg = String()
                         msg.data = "%s : %s" % (PadKeys(code), KeyAction(value))
-                        self.publisher_.publish(msg)
+                        self._publisher.publish(msg)
                         self.get_logger().info('Gamepad input: ' + msg.data)
 
                     try:
@@ -90,10 +90,6 @@ def main(args=None):
 
     reader = GamepadReader()
     reader.read_loop()
-
-    # Destroy the node explicitly
-    # (optional - otherwise it will be done automatically
-    # when the garbage collector destroys the node object)
     reader.destroy_node()
     rclpy.shutdown()
 
