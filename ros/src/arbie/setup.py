@@ -26,7 +26,8 @@ setup(
     entry_points={
         'console_scripts': [
             'gamepad = arbie.gamepad_reader:main',
-            'motor = arbie.motor_control:main',
+            'control = arbie.motor_control:main',
+            'motors = arbie.motor_driver:main',
         ],
     },
     classifiers=[

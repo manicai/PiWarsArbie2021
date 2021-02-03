@@ -17,7 +17,6 @@ from rclpy.node import Node
 from std_msgs.msg import String
 
 from .constants import KeyAction, PadKeys
-from . import redboard
 
 
 # Scale factors to get straight driving.
@@ -33,7 +32,7 @@ class MotorController(Node):
             'controller',
             self.listener_callback,
             10)
-        self.subscription  # prevent unused variable warning
+        self._publisher = self.create_publisher(String, 'motor', 10)
 
     def listener_callback(self, msg):
         btn_text, action_text = [s.strip() for s in msg.data.split(' : ')]
@@ -60,25 +59,15 @@ class MotorController(Node):
         else:
             assert False, 'Should be unreachable'
 
-        motor_left *= MOTOR_LEFT_SCALE
-        motor_right *= MOTOR_RIGHT_SCALE
-
-        self.get_logger().info('Motors : left %d, right %d' % (motor_left, motor_right))
-
-        redboard.M1(motor_left)
-        redboard.M2(motor_right)
+        message = str(motor_left) + ' : ' + str(motor_right)
+        self._publisher.publish(message)
 
 
 def main(args=None):
     rclpy.init(args=args)
 
     minimal_subscriber = MotorController()
-
     rclpy.spin(minimal_subscriber)
-
-    # Destroy the node explicitly
-    # (optional - otherwise it will be done automatically
-    # when the garbage collector destroys the node object)
     minimal_subscriber.destroy_node()
     rclpy.shutdown()
 
