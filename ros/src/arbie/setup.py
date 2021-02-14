@@ -28,6 +28,9 @@ setup(
             'gamepad = arbie.gamepad_reader:main',
             'control = arbie.motor_control:main',
             'motors = arbie.motor_driver:main',
+            'launcher = arbie.launcher:main',
+            'line_control = arbie.line_control:main',
+            'line_sensor = arbie.line_follower:main',
         ],
     },
     classifiers=[
