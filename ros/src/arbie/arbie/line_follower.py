@@ -20,6 +20,7 @@ from rclpy.node import Node
 from std_msgs.msg import String
 
 import redboard
+from constants import Channels
 
 LEFT_SENSOR = 6
 CENTRE_SENSOR = 13
@@ -31,7 +32,7 @@ SENSORS = [LEFT_SENSOR, CENTRE_SENSOR, RIGHT_SENSOR]
 class LineFollowSensor(Node):
     def __init__(self):
         super().__init__('line_follow_sensor')
-        self._publisher = self.create_publisher(String, 'line_follow', 10)
+        self._publisher = self.create_publisher(String, Channels.line_follow_sensor, 10)
 
     def read_loop(self):
         for sensor in SENSORS:
@@ -42,6 +43,10 @@ class LineFollowSensor(Node):
             centre = redboard.readPin(CENTRE_SENSOR)
             right = redboard.readPin(RIGHT_SENSOR)
 
+            msg = String()
+            msg.data = ','.join(str(s) for s in [left, centre, right])
+            self._publisher.publish(msg)
+
             self.get_logger().info('Line follow sensors : [' +
                                    ', '.join(str(s) for s in [left, centre, right]) +
                                    ']')
@@ -51,9 +56,9 @@ class LineFollowSensor(Node):
 def main(args=None):
     rclpy.init(args=args)
 
-    reader = LineFollowSensor()
-    reader.read_loop()
-    reader.destroy_node()
+    node = LineFollowSensor()
+    node.read_loop()
+    node.destroy_node()
     rclpy.shutdown()
 
 
