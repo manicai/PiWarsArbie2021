@@ -49,3 +49,9 @@ class KeyAction(enum.Enum):
 
     def __str__(self):
         return self.name
+
+
+class Channels:
+    gamepad = 'controller'
+    line_follow_sensor = 'line_follow'
+    motors = 'motor'
