@@ -14,10 +14,10 @@
 
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String
+from arbie_msgs.msg import Gamepad, LineSensor, Motor
 
 from .constants import KeyAction, PadKeys, Channels
-
+from .callbacks import GamepadCallback, LineSensorCallback
 
 MOTOR_SPEED = 60
 
@@ -27,34 +27,31 @@ class LineController(Node):
         super().__init__('line_controller')
         self.active = False
         self.gamepad_subscription = self.create_subscription(
-            String,
+            Gamepad,
             Channels.gamepad,
             self.gamepad_callback,
             10)
-        self.line_subscription = self.create_subscriptino(
-            String,
+        self.line_subscription = self.create_subscription(
+            LineSensor,
             Channels.line_follow_sensor,
             self.line_follow_callback,
             10)
 
-        self._publisher = self.create_publisher(String, 'motor', 10)
+        self._publisher = self.create_publisher(Motor, Channels.motors, 10)
 
-    def gamepad_callback(self, msg):
-        btn_text, action_text = [s.strip() for s in msg.data.split(' : ')]
-        btn, action = PadKeys[btn_text], KeyAction[action_text]
-
-        if btn == PadKeys.right_shoulder and action == KeyAction.up:
+    @GamepadCallback
+    def gamepad_callback(self, pad_key, key_action):
+        if pad_key == PadKeys.right_shoulder and key_action == KeyAction.up:
             self.active = True
             self.get_logger().info('Line control : activated')
-        if btn == PadKeys.left_shoulder and action == KeyAction.up:
+        if pad_key == PadKeys.left_shoulder and key_action == KeyAction.up:
             self.active = False
             self.get_logger().info('Line control : deactivated')
 
-    def line_follow_callback(self, msg):
+    @LineSensorCallback
+    def line_follow_callback(self, left, centre, right):
         if not self.active:
             return
-
-        left, centre, right = (int(x) for x in msg.data.split(','))
 
         if left and not right:
             self.get_logger().info('Line control : turn right')
@@ -73,8 +70,10 @@ class LineController(Node):
             motor_left = 0
             motor_right = 0
 
-        message = str(motor_left) + ' : ' + str(motor_right)
-        self._publisher.publish(message)
+        msg = Motor()
+        msg.left_percent = motor_left
+        msg.right_percent = motor_right
+        self._publisher.publish(msg)
 
 
 def main(args=None):

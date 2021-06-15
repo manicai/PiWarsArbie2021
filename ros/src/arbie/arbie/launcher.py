@@ -14,38 +14,36 @@
 
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String
+from arbie_msgs.msg import Gamepad
 
 from . import redboard
 from .constants import PadKeys, KeyAction, Channels
+from .callbacks import GamepadCallback
 
-# Scale factors to get straight driving.
-MOTOR_LEFT_SCALE = 100
-MOTOR_RIGHT_SCALE = -100
+SOLENOID_PIN = None
 
 
 class Launcher(Node):
     def __init__(self):
         super().__init__('launcher')
         self.subscription = self.create_subscription(
-            String,
+            Gamepad,
             Channels.gamepad,
             self.listener_callback,
             10)
 
-    def listener_callback(self, msg):
-        btn_text, action_text = [s.strip() for s in msg.data.split(' : ')]
-        btn, action = PadKeys[btn_text], KeyAction[action_text]
-
-        if btn != PadKeys.button_x:
+    @GamepadCallback
+    def listener_callback(self, pad_key, key_action):
+        if pad_key != PadKeys.button_x:
             return
 
-        if action == KeyAction.down:
+        if key_action == KeyAction.down:
             # Set solenoid
-            pass
-        elif action == KeyAction.up:
+            redboard.pull_down(SOLENOID_PIN)
+
+        elif key_action == KeyAction.up:
             # Unset solenoid
-            pass
+            redboard.pull_up(SOLENOID_PIN)
 
 
 def main(args=None):

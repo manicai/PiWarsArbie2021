@@ -19,9 +19,9 @@ import pyudev as udev
 
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String
+from arbie_msgs.msg import Gamepad
 
-from .constants import KeyAction, PadKeys
+from .constants import KeyAction, PadKeys, Channels
 
 
 def get_gamepad_devices(ctx: udev.Context = None):
@@ -44,7 +44,7 @@ def get_gamepad_devices(ctx: udev.Context = None):
 class GamepadReader(Node):
     def __init__(self):
         super().__init__('gamepad_reader')
-        self._publisher = self.create_publisher(String, 'controller', 10)
+        self._publisher = self.create_publisher(Gamepad, Channels.gamepad, 10)
 
     def read_loop(self):
         while True:
@@ -58,6 +58,7 @@ class GamepadReader(Node):
 
             # Assume only one controller.
             dev_path = devices.pop()
+            print('Connected to ', dev_path)
 
             # From /usr/include/linux/input.h
             struct_input_event_format = 'llHHI'
@@ -71,10 +72,11 @@ class GamepadReader(Node):
                 while event:
                     (_, _, evt_type, code, value) = struct.unpack(struct_input_event_format, event)
                     if evt_type == ev_key:
-                        msg = String()
-                        msg.data = "%s : %s" % (PadKeys(code), KeyAction(value))
+                        msg = Gamepad()
+                        msg.pad_key = code
+                        msg.key_action = value
                         self._publisher.publish(msg)
-                        self.get_logger().info('Gamepad input: ' + msg.data)
+                        print(PadKeys(code), " ", KeyAction(value))
 
                     try:
                         event = dev_file.read(struct_input_event_size)

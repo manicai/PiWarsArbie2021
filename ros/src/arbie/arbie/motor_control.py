@@ -14,10 +14,10 @@
 
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String
+from arbie_msgs.msg import Gamepad, Motor
 
-from .constants import KeyAction, PadKeys
-
+from .constants import KeyAction, PadKeys, Channels
+from .callbacks import GamepadCallback
 
 # Scale factors to get straight driving.
 MOTOR_LEFT_SCALE = 100
@@ -28,39 +28,41 @@ class MotorController(Node):
     def __init__(self):
         super().__init__('motor_controller')
         self.subscription = self.create_subscription(
-            String,
-            'controller',
+            Gamepad,
+            Channels.gamepad,
             self.listener_callback,
             10)
-        self._publisher = self.create_publisher(String, 'motor', 10)
+        self._publisher = self.create_publisher(Motor, Channels.motors, 10)
 
-    def listener_callback(self, msg):
-        btn_text, action_text = [s.strip() for s in msg.data.split(' : ')]
-        btn, action = PadKeys[btn_text], KeyAction[action_text]
-
+    @GamepadCallback
+    def listener_callback(self, pad_key, key_action):
         # Ignore buttons that aren't part of the gamepad cross.
-        if not btn.is_cross():
+        print('Controller ', pad_key, key_action)
+        if not pad_key.is_cross():
             return
         # Ignore repeat
-        if action == KeyAction.repeat:
+        if key_action == KeyAction.repeat:
             return
 
-        if action == KeyAction.up:
+        if key_action == KeyAction.up:
             # Key released - stop
             motor_left, motor_right = 0, 0
-        elif btn == PadKeys.cross_up:
+        elif pad_key == PadKeys.cross_up:
             motor_left, motor_right = 1, 1
-        elif btn == PadKeys.cross_down:
+        elif pad_key == PadKeys.cross_down:
             motor_left, motor_right = -1, -1
-        elif btn == PadKeys.cross_left:
+        elif pad_key == PadKeys.cross_left:
             motor_left, motor_right = -1, 1
-        elif btn == PadKeys.cross_right:
+        elif pad_key == PadKeys.cross_right:
             motor_left, motor_right = 1, -1
         else:
             assert False, 'Should be unreachable'
 
-        message = str(motor_left) + ' : ' + str(motor_right)
-        self._publisher.publish(message)
+        print(motor_left, motor_right)
+        msg = Motor()
+        msg.left_percent = float(motor_left * 100)
+        msg.right_percent = float(motor_right * 100)
+        self._publisher.publish(msg)
 
 
 def main(args=None):

@@ -52,6 +52,12 @@ class KeyAction(enum.Enum):
 
 
 class Channels:
-    gamepad = 'controller'
+    gamepad = 'gamepad'
     line_follow_sensor = 'line_follow'
     motors = 'motor'
+
+
+min_speed = 30
+max_speed = 60
+flank_speed = 80
+speed_increment = (max_speed - min_speed) / 10.0

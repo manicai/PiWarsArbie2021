@@ -30,7 +30,7 @@ setup(
             'motors = arbie.motor_driver:main',
             'launcher = arbie.launcher:main',
             'line_control = arbie.line_control:main',
-            'line_sensor = arbie.line_follower:main',
+            'line_sensor = arbie.line_follow_sensor:main',
         ],
     },
     classifiers=[

@@ -14,10 +14,11 @@
 
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String
+from arbie_msgs.msg import Motor
 
 from . import redboard
-
+from .constants import Channels
+from .callbacks import MotorCallback
 
 # Scale factors to get straight driving.
 MOTOR_LEFT_SCALE = 100
@@ -28,16 +29,15 @@ class MotorDriver(Node):
     def __init__(self):
         super().__init__('motor_driver')
         self.subscription = self.create_subscription(
-            String,
-            'motor',
+            Motor,
+            Channels.motors,
             self.listener_callback,
             10)
 
-    def listener_callback(self, msg):
-        motor_left, motor_right = [float(s.strip()) for s in msg.data.split(' : ')]
-
-        motor_left *= MOTOR_LEFT_SCALE
-        motor_right *= MOTOR_RIGHT_SCALE
+    @MotorCallback
+    def listener_callback(self, left_percent, right_percent):
+        motor_left = left_percent / 100.0 * MOTOR_LEFT_SCALE
+        motor_right = right_percent / 100.0 * MOTOR_RIGHT_SCALE
 
         self.get_logger().info('Motors : left %d, right %d' % (motor_left, motor_right))
 
