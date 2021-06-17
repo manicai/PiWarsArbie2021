@@ -20,7 +20,7 @@ from . import redboard
 from .constants import PadKeys, KeyAction, Channels
 from .callbacks import GamepadCallback
 
-SOLENOID_PIN = None
+SOLENOID_PIN = 20
 
 
 class Launcher(Node):
