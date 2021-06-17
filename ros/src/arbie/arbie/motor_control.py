@@ -23,6 +23,10 @@ from .callbacks import GamepadCallback
 MOTOR_LEFT_SCALE = 100
 MOTOR_RIGHT_SCALE = -100
 
+MIN_VALUE = 50
+MAX_VALUE = 100
+INCREMENT = 2
+
 
 class MotorController(Node):
     def __init__(self):
@@ -34,20 +38,24 @@ class MotorController(Node):
             10)
         self._publisher = self.create_publisher(Motor, Channels.motors, 10)
 
+        self._multiplier = 0
+
     @GamepadCallback
     def listener_callback(self, pad_key, key_action):
         # Ignore buttons that aren't part of the gamepad cross.
         print('Controller ', pad_key, key_action)
         if not pad_key.is_cross():
             return
-        # Ignore repeat
-        if key_action == KeyAction.repeat:
-            return
 
         if key_action == KeyAction.up:
             # Key released - stop
-            motor_left, motor_right = 0, 0
-        elif pad_key == PadKeys.cross_up:
+            self._multiplier = 0
+        elif key_action == KeyAction.down:
+            self._multiplier = MIN_VALUE
+        elif key_action == KeyAction.repeat:
+            self._multiplier = min(self._multiplier + INCREMENT, MAX_VALUE)
+
+        if pad_key == PadKeys.cross_up:
             motor_left, motor_right = 1, 1
         elif pad_key == PadKeys.cross_down:
             motor_left, motor_right = -1, -1
@@ -58,10 +66,10 @@ class MotorController(Node):
         else:
             assert False, 'Should be unreachable'
 
-        print(motor_left, motor_right)
+        print(motor_left * self._multiplier, motor_right * self._multiplier)
         msg = Motor()
-        msg.left_percent = float(motor_left * 100)
-        msg.right_percent = float(motor_right * 100)
+        msg.left_percent = float(motor_left * self._multiplier)
+        msg.right_percent = float(motor_right * self._multiplier)
         self._publisher.publish(msg)
 
 
