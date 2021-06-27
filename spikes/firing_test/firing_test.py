@@ -13,19 +13,14 @@ def script():
 
             pin_txt, value_txt = input_txt.split(' ', 2)
             pin = int(pin_txt)
-            value = int(value_txt)
+            value = 1 if int(value_txt) else 0
 
             if pin not in pins:
                 print('Unknown PIN', pin, 'expect one of', pins, file=sys.stderr)
                 continue
 
-            if not value:
-                # Set solenoid
-                redboard.pull_down(pin)
-            else:
-                # Unset solenoid
-                redboard.pull_up(pin)
-
+            redboard.output_pin(pin)
+            redboard.setPin(pin, value)
     finally:
         for pin in pins:
             redboard.pull_up(pin)

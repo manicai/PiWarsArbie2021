@@ -31,19 +31,25 @@ class Launcher(Node):
             Channels.gamepad,
             self.listener_callback,
             10)
+        redboard.output_pin(SOLENOID_PIN)
 
     @GamepadCallback
     def listener_callback(self, pad_key, key_action):
         if pad_key != PadKeys.button_x:
             return
+        if key_action == KeyAction.repeat:
+            return
 
+        print("Firing", end=' ')
         if key_action == KeyAction.down:
             # Set solenoid
-            redboard.pull_down(SOLENOID_PIN)
+            redboard.setPin(SOLENOID_PIN, 1)
+            print("Trigger pin", SOLENOID_PIN)
 
         elif key_action == KeyAction.up:
             # Unset solenoid
-            redboard.pull_up(SOLENOID_PIN)
+            redboard.setPin(SOLENOID_PIN, 0)
+            print("Release pin", SOLENOID_PIN)
 
 
 def main(args=None):
