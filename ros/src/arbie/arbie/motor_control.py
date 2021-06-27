@@ -56,9 +56,9 @@ class MotorController(Node):
             self._multiplier = min(self._multiplier + INCREMENT, MAX_VALUE)
 
         if pad_key == PadKeys.cross_up:
-            motor_left, motor_right = 1, 1
-        elif pad_key == PadKeys.cross_down:
             motor_left, motor_right = -1, -1
+        elif pad_key == PadKeys.cross_down:
+            motor_left, motor_right = 1, 1
         elif pad_key == PadKeys.cross_left:
             motor_left, motor_right = -1, 1
         elif pad_key == PadKeys.cross_right:
