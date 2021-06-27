@@ -27,14 +27,14 @@ def generate_launch_description():
             executable='launcher',
             name='launcher',
         ),
-        Node(
-            package=PACKAGE,
-            executable='line_control',
-            name='line_control',
-        ),
-        Node(
-            package=PACKAGE,
-            executable='line_sensor',
-            name='line_sensor',
-        )
+        # Node(
+        #     package=PACKAGE,
+        #     executable='line_control',
+        #     name='line_control',
+        # ),
+        # Node(
+        #     package=PACKAGE,
+        #     executable='line_sensor',
+        #     name='line_sensor',
+        # )
     ])
