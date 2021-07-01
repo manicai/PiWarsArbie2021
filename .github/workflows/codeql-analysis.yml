@@ -63,11 +63,11 @@ jobs:
     #    and modify them (or add more) to build your code if your project
     #    uses a compiled language
 
-    - name: Make C
-      working-directory: spikes/udev/dump_udev/
-      run: |
-        apt-get install -y libudev-dev
-        make 
+    # - name: Make C
+    #   working-directory: spikes/udev/dump_udev/
+    #   run: |
+    #     apt-get install -y libudev-dev
+    #     make 
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
