@@ -65,7 +65,9 @@ jobs:
 
     - name: Make C
       working-directory: spikes/udev/dump_udev/
-      run: make 
+      run: |
+        apt-get install -y libudev-dev
+        make 
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
