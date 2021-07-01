@@ -32,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'cpp', 'python' ]
+        language: [ 'python' ]
         # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python' ]
         # Learn more:
         # https://docs.github.com/en/free-pro-team@latest/github/finding-security-vulnerabilities-and-errors-in-your-code/configuring-code-scanning#changing-the-languages-that-are-analyzed
@@ -63,9 +63,11 @@ jobs:
     #    and modify them (or add more) to build your code if your project
     #    uses a compiled language
 
-    - name: Make C
-      working-directory: spikes/udev/dump_udev/
-      run: make 
+    # - name: Make C
+    #   working-directory: spikes/udev/dump_udev/
+    #   run: |
+    #     apt-get install -y libudev-dev
+    #     make 
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
